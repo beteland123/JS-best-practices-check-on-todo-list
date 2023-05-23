@@ -1,27 +1,15 @@
 import Lists from './modules/list.js';
 import './style.css';
-import more from './more.png';
-import recycle from './recycle.png';
-import left from './to-left.png';
-import del from './delete.jpeg';
+import { createListMarkup, content } from './modules/dynamic_element.js';
 
 const List = new Lists();
 
 const renderList = (description, id, completed) => {
-  const listDiv = document.createElement('div');
-  listDiv.classList.add('eachList');
-  listDiv.innerHTML = `
-    <div class="left">
-      <input type="checkbox" id="check-${id}" ${completed ? 'checked' : ''}>
-      <span class="des ${completed ? 'completed' : ''}" contenteditable="true" data-id="${id}">${description}</span>
-    </div>
-    <img class="more" src="${more}" alt="more" data-id="${id}">
-    <img class="removebtn" src="${del}" alt="remove" style="display:none;" data-id="${id}">
-  `;
+  const listMarkup = createListMarkup(description, id, completed);
   const newDiv = document.createElement('div');
   newDiv.classList.add('eachList');
   newDiv.dataset.id = id;
-  newDiv.innerHTML = listDiv.innerHTML;
+  newDiv.innerHTML = listMarkup.innerHTML;
 
   const checkbox = newDiv.querySelector(`#check-${id}`);
   checkbox.addEventListener('change', () => {
@@ -88,13 +76,7 @@ const attachEventListeners = () => {
 };
 
 const component = () => {
-  const container = document.querySelector('.container');
-  const element = document.createElement('div');
-  element.id = 'list_elemnt';
-  element.innerHTML = `<p>Today's To Do</p> <img class="refresh" src="${recycle}" alt="refresh page">`;
-  const input = document.createElement('div');
-  input.id = 'input_div';
-  input.innerHTML = `<input class="inputSpace" placeholder="Add to your list..."><img class="clear" src="${left}" alt="clear">`;
+  const c = content();
   const listObj = document.createElement('div');
   listObj.id = 'listObjId';
   List.lists.forEach((list, index) => {
@@ -104,11 +86,8 @@ const component = () => {
   const completed = document.createElement('div');
   completed.id = 'comp';
   completed.innerHTML = '<span> clear all completed<span>';
-  container.appendChild(element);
-  container.appendChild(input);
-  container.appendChild(listObj);
-  container.appendChild(completed);
-
+  c.appendChild(listObj);
+  c.appendChild(completed);
   const inputVar = document.querySelector('.inputSpace');
   inputVar.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
